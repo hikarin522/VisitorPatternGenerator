@@ -1,0 +1,80 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish_github:
+        type: boolean
+        description: Publish to GitHub Packages
+        default: false
+      publish_nuget:
+        type: boolean
+        description: Publish to nuget.org
+        default: false
+
+env:
+  USERPROFILE: .
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Restore tools
+      run: dotnet tool restore
+
+    - name: Restore dependencies
+      run: dotnet restore VisitorPatternGenerator.sln
+
+    - name: Format
+      run: dotnet format VisitorPatternGenerator.sln --no-restore --verify-no-changes
+
+    - name: Build
+      run: dotnet build VisitorPatternGenerator.sln --no-restore -c Release
+
+    - name: Test
+      run: dotnet test VisitorPatternGenerator.sln --no-build -c Release --verbosity normal
+
+    - name: Sample Restore dependencies
+      run: dotnet restore Sample/Sample.sln
+
+    - name: Sample Format
+      run: dotnet format Sample/Sample.sln --no-restore --verify-no-changes
+
+    - name: Sample Build
+      run: dotnet build Sample/Sample.sln --no-restore -c Release
+
+    - name: Sample Test
+      run: dotnet test Sample/Sample.sln --no-build -c Release --verbosity normal
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: nupkg
+        path: artifacts/*.nupkg
+
+    - name: NuGet add souce
+      id: nuget_add_source
+      if: ${{ github.event.inputs.publish_github }}
+      run: dotnet nuget add source -u hikarin522 -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text -n "github" "https://nuget.pkg.github.com/hikarin522/index.json"
+
+    - name: Publish GitHub Packages
+      if: ${{ steps.nuget_add_source.conclusion == 'success' }}
+      run: dotnet nuget push "artifacts/*.nupkg" -k ${{ secrets.GITHUB_TOKEN }} -s "github" --skip-duplicate
+
+    - name: Publish NuGet
+      if: ${{ github.event.inputs.publish_nuget }}
+      run: dotnet nuget push "artifacts/*.nupkg" -k ${{ secrets.NUGET_OLG_API_KEY }} -s "nuget" --skip-duplicate

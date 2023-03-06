@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
+    <PackageReference Include="System.CodeDom" Version="7.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="build\*" PackagePath="build\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <T4 Include="**\*.tt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="@(T4)">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>%(Filename).cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="@(T4->'%(RelativeDir)%(Filename).cs')">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>%(Filename).tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <Target Name="T4Generate" BeforeTargets="BeforeBuild" Condition="'$(MSBuildRuntimeType)' != 'Full'">
+    <Exec Command="dotnet t4 &quot;%(T4.Filename).tt&quot; -c &quot;$(RootNamespace).$([System.Text.RegularExpressions.Regex]::Replace(%(T4.RelativeDir), '[\\/]', '.'))%(T4.Filename)&quot; -o &quot;%(T4.Filename).cs&quot;" WorkingDirectory="$(MSBuildProjectDirectory)\%(T4.RelativeDir)" />
+    <ItemGroup>
+      <T4Generated Include="@(T4->'%(RelativeDir)%(Filename).cs')" Exclude="@(Compile)" />
+      <Compile Include="@(T4Generated)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

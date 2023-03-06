@@ -4,4 +4,12 @@
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
 
+  <Target Name="CopyPackage" AfterTargets="Pack" Condition="$(IsPackable)" >
+    <Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(MSBuildThisFileDirectory)nupkg" />
+  </Target>
+
+  <Target Name="CleanNugetPackageCache" AfterTargets="Clean" Condition="$(IsPackable)" >
+    <Exec Command="dotnet nuget locals global-packages -c" UseUtf8Encoding="Always" />
+  </Target>
+
 </Project>
