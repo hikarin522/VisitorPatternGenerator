@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Sample\Sample\*.cs" LinkBase="Sample" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MessagePack.Annotations" Version="2.4.59" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="xunit" Version="2.4.2" />

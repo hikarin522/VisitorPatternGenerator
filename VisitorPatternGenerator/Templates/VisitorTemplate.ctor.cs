@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 
 using Microsoft.CodeAnalysis;
@@ -14,36 +13,36 @@ partial class VisitorTemplate
 
     public string TaskName { get; }
 
-    public ITypeSymbol? BaseResultType { get; }
+    public ITypeSymbol? BaseResult { get; }
 
     public INamedTypeSymbol VisitorInterface { get; }
 
-    public INamedTypeSymbol AcceptorInterface { get; }
+    public INamedTypeSymbol Acceptor { get; }
 
-    public ImmutableArray<(INamedTypeSymbol Type, INamedTypeSymbol? ResultType)> AcceptorTypes { get; }
+    public ImmutableArray<(INamedTypeSymbol Type, INamedTypeSymbol? ResultType)> Acceptors { get; }
 
     public VisitorTemplate(
         string rootNamespace,
         string taskName,
-        ITypeSymbol? baseResultType,
+        ITypeSymbol? baseResult,
         INamedTypeSymbol visitorInterface,
-        INamedTypeSymbol acceptorInterface,
+        INamedTypeSymbol acceptor,
         ImmutableArray<(INamedTypeSymbol Type, INamedTypeSymbol? ResultType)> acceptors
     )
     {
         this.RootNamespace = rootNamespace;
         this.TaskName = taskName;
-        this.BaseResultType = baseResultType;
+        this.BaseResult = baseResult;
         this.VisitorInterface = visitorInterface;
-        this.AcceptorInterface = acceptorInterface;
-        this.AcceptorTypes = acceptors;
+        this.Acceptor = acceptor;
+        this.Acceptors = acceptors;
     }
 
     public bool IsAsync => !string.IsNullOrWhiteSpace(this.TaskName);
 
     public string IfAsync(string str) => this.IsAsync ? str : string.Empty;
 
-    public bool IsGeneric => this.BaseResultType is ITypeParameterSymbol;
+    public bool IsGeneric => this.BaseResult is ITypeParameterSymbol;
 
     public string GetTypeParamStr()
     {
@@ -96,7 +95,9 @@ partial class VisitorTemplate
         return resultName is null ? taskName ?? "void" : taskName is null ? resultName : $"{taskName}<{resultName}>";
     }
 
-    public static string WrapAngle(ITypeSymbol type, ITypeSymbol? resultType = null)
-        => $"<{type.ToDisplayString()}" + (resultType is null ? ">" : $", {resultType.ToDisplayString()}>");
+    public static string GetNamespace(INamedTypeSymbol type)
+        => type.ContainingNamespace.ToDisplayString();
 
+    public static string GetTypeIdentifier(INamedTypeSymbol type)
+        => type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat.WithGenericsOptions(SymbolDisplayGenericsOptions.IncludeTypeParameters | SymbolDisplayGenericsOptions.IncludeVariance));
 }

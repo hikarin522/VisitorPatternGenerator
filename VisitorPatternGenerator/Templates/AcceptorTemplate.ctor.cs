@@ -9,18 +9,18 @@ partial class AcceptorTemplate
 {
     internal AcceptorOptions Options { get; }
 
-    internal INamedTypeSymbol AcceptorInterface { get; }
+    internal INamedTypeSymbol Acceptor { get; }
 
-    internal ImmutableSortedSet<INamedTypeSymbol> AcceptorTypes { get; }
+    internal ImmutableSortedSet<INamedTypeSymbol> Acceptors { get; }
 
     internal AcceptorTemplate(
         AcceptorOptions options,
-        INamedTypeSymbol acceptorInterface,
-        ImmutableSortedSet<INamedTypeSymbol> acceptorTypes
+        INamedTypeSymbol acceptor,
+        ImmutableSortedSet<INamedTypeSymbol> acceptors
     )
     {
         this.Options = options;
-        this.AcceptorInterface = acceptorInterface;
-        this.AcceptorTypes = acceptorTypes;
+        this.Acceptor = acceptor;
+        this.Acceptors = acceptors;
     }
 }

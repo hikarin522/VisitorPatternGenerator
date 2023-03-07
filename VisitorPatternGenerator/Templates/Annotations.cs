@@ -7,7 +7,7 @@ internal enum AcceptorOptions
     MessagePackUnion = 0x100,
 }
 
-[System.AttributeUsage(System.AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
+[System.AttributeUsage(System.AttributeTargets.Interface | System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 internal sealed class AcceptorAttribute: System.Attribute
 {
     public AcceptorOptions Options { get; }

@@ -6,10 +6,7 @@
 
   <Target Name="CopyPackage" AfterTargets="Pack" Condition="$(IsPackable)" >
     <Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(MSBuildThisFileDirectory)nupkg" />
-  </Target>
-
-  <Target Name="CleanNugetPackageCache" AfterTargets="Clean" Condition="$(IsPackable)" >
-    <Exec Command="dotnet nuget locals global-packages -c" UseUtf8Encoding="Always" />
+    <RemoveDir Directories="$(MSBuildThisFileDirectory).nuget\packages\$(PackageId.ToLower())\$(PackageVersion)" />
   </Target>
 
 </Project>

@@ -64,7 +64,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: nupkg
-        path: artifacts/*.nupkg
+        path: nupkg/*.nupkg
 
     - name: NuGet add souce
       id: nuget_add_source
@@ -73,8 +73,8 @@ jobs:
 
     - name: Publish GitHub Packages
       if: ${{ steps.nuget_add_source.conclusion == 'success' }}
-      run: dotnet nuget push "artifacts/*.nupkg" -k ${{ secrets.GITHUB_TOKEN }} -s "github" --skip-duplicate
+      run: dotnet nuget push "nupkg/*.nupkg" -k ${{ secrets.GITHUB_TOKEN }} -s "github" --skip-duplicate
 
     - name: Publish NuGet
       if: ${{ github.event.inputs.publish_nuget }}
-      run: dotnet nuget push "artifacts/*.nupkg" -k ${{ secrets.NUGET_OLG_API_KEY }} -s "nuget" --skip-duplicate
+      run: dotnet nuget push "nupkg/*.nupkg" -k ${{ secrets.NUGET_OLG_API_KEY }} -s "nuget" --skip-duplicate
