@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using VisitorPatternGenerator.Templates;
 
@@ -151,18 +148,4 @@ public class VisitorPatternGenerator: IIncrementalGenerator
 
     private static string _GetFileName(INamedTypeSymbol symbol)
         => (symbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : symbol.ContainingNamespace.ToDisplayString() + ".") + symbol.MetadataName;
-}
-
-public static class DiagnosticDescriptors
-{
-    const string CATEGORY = nameof(VisitorPatternGenerator);
-
-    public static DiagnosticDescriptor TypeParamCountError { get; } = new(
-        id: $"{CATEGORY}003",
-        title: "Type parameter count must equal argument count + wrapType type parameter count",
-        messageFormat: "'{0}' type parameters are required.",
-        category: CATEGORY,
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
-    );
 }
