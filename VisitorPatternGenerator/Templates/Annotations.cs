@@ -15,10 +15,10 @@ internal sealed class AcceptorAttribute: System.Attribute
     public AcceptorAttribute(AcceptorOptions options = AcceptorOptions.None) { this.Options = options; }
 }
 
-[System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+[System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
 internal sealed class AcceptorAttribute<TAcceptor>: System.Attribute where TAcceptor : class { }
 
-[System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+[System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
 internal sealed class AcceptorAttribute<TAcceptor, TResult>: System.Attribute where TAcceptor : class { }
 
 [System.AttributeUsage(System.AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
