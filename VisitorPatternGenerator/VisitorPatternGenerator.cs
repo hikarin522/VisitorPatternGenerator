@@ -60,7 +60,8 @@ public class VisitorPatternGenerator: IIncrementalGenerator
                 return e.Left.AddRange(e.Right);
             })).Select(static (e, ct) => {
                 ct.ThrowIfCancellationRequested();
-                return e.ToLookup(static e => (INamedTypeSymbol)e.Attributes[0].AttributeClass!.TypeArguments[0], (IEqualityComparer<INamedTypeSymbol>)SymbolEqualityComparer.Default)
+                return e.SelectMany(static e => e.Attributes.Select(attr => (attr, e)))
+                    .ToLookup(static e => (INamedTypeSymbol)e.Item1.AttributeClass!.TypeArguments[0], (IEqualityComparer<INamedTypeSymbol>)SymbolEqualityComparer.Default)
                     .ToImmutableDictionary(static e => e.Key!, static e => e.ToImmutableArray(), (IEqualityComparer<INamedTypeSymbol>)SymbolEqualityComparer.Default);
             });
 
@@ -95,7 +96,11 @@ public class VisitorPatternGenerator: IIncrementalGenerator
         }
     }
 
-    private static void _AddAcceptorSource(SourceProductionContext ctx, GeneratorAttributeSyntaxContext acceptor, ImmutableArray<GeneratorAttributeSyntaxContext> acceptors)
+    private static void _AddAcceptorSource(
+        SourceProductionContext ctx,
+        GeneratorAttributeSyntaxContext acceptor,
+        ImmutableArray<(AttributeData, GeneratorAttributeSyntaxContext)> acceptors
+    )
     {
         var acceptorSymbol = (INamedTypeSymbol)acceptor.TargetSymbol;
 
@@ -104,14 +109,19 @@ public class VisitorPatternGenerator: IIncrementalGenerator
         var options = (AcceptorOptions)acceptorAttr.ConstructorArguments[0].Value!;
 
         var acceptorTypes = acceptors
-            .Select(static e => (INamedTypeSymbol)e.TargetSymbol)
+            .Select(static e => (INamedTypeSymbol)e.Item2.TargetSymbol)
             .ToImmutableSortedSet(Comparer<INamedTypeSymbol>.Create(static (l, r) => string.Compare(_GetFileName(l), _GetFileName(r))));
 
         var template = new AcceptorTemplate(options, acceptorSymbol, acceptorTypes);
         ctx.AddSource(_GetFileName(acceptorSymbol), template.TransformText());
     }
 
-    private static void _AddVisitorSource(SourceProductionContext ctx, string rootNamespace, GeneratorAttributeSyntaxContext visitor, ImmutableArray<GeneratorAttributeSyntaxContext> acceptors)
+    private static void _AddVisitorSource(
+        SourceProductionContext ctx,
+        string rootNamespace,
+        GeneratorAttributeSyntaxContext visitor,
+        ImmutableArray<(AttributeData, GeneratorAttributeSyntaxContext)> acceptors
+    )
     {
         var visitorSymbol = (INamedTypeSymbol)visitor.TargetSymbol;
 
@@ -132,7 +142,7 @@ public class VisitorPatternGenerator: IIncrementalGenerator
         ITypeSymbol? baseResultType = nonGenericReturn ? baseResultSymbol : typeParams.Last();
 
         var acceptorTypes = acceptors
-            .Select(static e => ((INamedTypeSymbol)e.TargetSymbol, e.Attributes[0].AttributeClass!.TypeArguments.ElementAtOrDefault(1) as INamedTypeSymbol))
+            .Select(static e => ((INamedTypeSymbol)e.Item2.TargetSymbol, e.Item1.AttributeClass!.TypeArguments.ElementAtOrDefault(1) as INamedTypeSymbol))
             .ToImmutableArray();
 
         var template = new VisitorTemplate(

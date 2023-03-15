@@ -14,6 +14,7 @@ partial interface ISampleVisitor
 {
     System.Threading.Tasks.Task<int> VisitAsync(Sample.Sample1 value);
     System.Threading.Tasks.Task<int> VisitAsync(Sample.Sample2 value);
+    System.Threading.Tasks.Task<int> VisitAsync(Sample.Sample3 value);
 }
 }
 
@@ -28,6 +29,14 @@ partial class Sample1: Sample.SampleBase, Sample.IVisitorResult<int>
 namespace Sample
 {
 partial class Sample2: Sample.SampleBase, Sample.IVisitorResult<int>
+{
+    public sealed override async System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleVisitor visitor) => await visitor.VisitAsync(this);
+}
+}
+
+namespace Sample
+{
+partial class Sample3: Sample.SampleBase, Sample.IVisitorResult<int>
 {
     public sealed override async System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleVisitor visitor) => await visitor.VisitAsync(this);
 }

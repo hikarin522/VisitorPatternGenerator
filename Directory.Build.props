@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <Authors>hikarin522</Authors>
     <Copyright>(c) 2023 hikarin522.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

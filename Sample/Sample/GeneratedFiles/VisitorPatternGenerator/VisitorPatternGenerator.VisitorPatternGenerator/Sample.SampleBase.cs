@@ -4,5 +4,6 @@ namespace Sample
 {
 [MessagePack.Union(1, typeof(Sample.Sample1))]
 [MessagePack.Union(2, typeof(Sample.Sample2))]
+[MessagePack.Union(3, typeof(Sample.Sample3))]
 partial class SampleBase { }
 }
