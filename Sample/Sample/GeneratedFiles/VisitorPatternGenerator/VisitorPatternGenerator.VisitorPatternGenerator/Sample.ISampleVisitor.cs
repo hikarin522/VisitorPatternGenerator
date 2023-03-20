@@ -2,9 +2,9 @@
 
 namespace Sample
 {
-partial class SampleBase
+partial interface ISample
 {
-    public abstract System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleVisitor visitor);
+    void Accept(Sample.ISampleVisitor visitor);
 }
 }
 
@@ -12,32 +12,41 @@ namespace Sample
 {
 partial interface ISampleVisitor
 {
-    System.Threading.Tasks.Task<int> VisitAsync(Sample.Sample1 value);
-    System.Threading.Tasks.Task<int> VisitAsync(Sample.Sample2 value);
-    System.Threading.Tasks.Task<int> VisitAsync(Sample.Sample3 value);
+    void Visit(Sample.Sample1 value);
+    void Visit(Sample.Sample2 value);
+    void Visit(Sample.Sample3 value);
+    void Visit(Sample.Sample4 value);
 }
 }
 
 namespace Sample
 {
-partial class Sample1: Sample.SampleBase, Sample.IVisitorResult<int>
+partial class Sample1: Sample.ISample
 {
-    public sealed override async System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleVisitor visitor) => await visitor.VisitAsync(this);
+    void Sample.ISample.Accept(Sample.ISampleVisitor visitor) => visitor.Visit(this);
 }
 }
 
 namespace Sample
 {
-partial class Sample2: Sample.SampleBase, Sample.IVisitorResult<int>
+partial class Sample2: Sample.ISample
 {
-    public sealed override async System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleVisitor visitor) => await visitor.VisitAsync(this);
+    void Sample.ISample.Accept(Sample.ISampleVisitor visitor) => visitor.Visit(this);
 }
 }
 
 namespace Sample
 {
-partial class Sample3: Sample.SampleBase, Sample.IVisitorResult<int>
+partial class Sample3: Sample.ISample
 {
-    public sealed override async System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleVisitor visitor) => await visitor.VisitAsync(this);
+    void Sample.ISample.Accept(Sample.ISampleVisitor visitor) => visitor.Visit(this);
+}
+}
+
+namespace Sample
+{
+partial class Sample4: Sample.ISample
+{
+    void Sample.ISample.Accept(Sample.ISampleVisitor visitor) => visitor.Visit(this);
 }
 }
