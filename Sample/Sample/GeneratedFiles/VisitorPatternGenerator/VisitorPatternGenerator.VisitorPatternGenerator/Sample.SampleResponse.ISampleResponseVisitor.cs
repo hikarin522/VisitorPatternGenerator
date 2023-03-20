@@ -12,14 +12,16 @@ namespace Sample.SampleResponse
 {
 partial interface ISampleResponseVisitor
 {
-    void Visit(Sample.SampleResponse.Sample1Response value);
-    void Visit(Sample.SampleResponse.Sample2Response value);
+    void Visit(Sample.SampleResponse.SampleResponse1 value);
+    void Visit(Sample.SampleResponse.SampleResponse2 value);
+    void Visit(Sample.SampleResponse.SampleResponse3 value);
+    void Visit(Sample.SampleResponse.SampleResponse4 value);
 }
 }
 
 namespace Sample.SampleResponse
 {
-partial class Sample1Response: Sample.SampleResponse.ISampleResponse
+partial class SampleResponse1: Sample.SampleResponse.ISampleResponse
 {
     void Sample.SampleResponse.ISampleResponse.Accept(Sample.SampleResponse.ISampleResponseVisitor visitor) => visitor.Visit(this);
 }
@@ -27,7 +29,23 @@ partial class Sample1Response: Sample.SampleResponse.ISampleResponse
 
 namespace Sample.SampleResponse
 {
-partial class Sample2Response: Sample.SampleResponse.ISampleResponse
+partial class SampleResponse2: Sample.SampleResponse.ISampleResponse
+{
+    void Sample.SampleResponse.ISampleResponse.Accept(Sample.SampleResponse.ISampleResponseVisitor visitor) => visitor.Visit(this);
+}
+}
+
+namespace Sample.SampleResponse
+{
+partial class SampleResponse3: Sample.SampleResponse.ISampleResponse
+{
+    void Sample.SampleResponse.ISampleResponse.Accept(Sample.SampleResponse.ISampleResponseVisitor visitor) => visitor.Visit(this);
+}
+}
+
+namespace Sample.SampleResponse
+{
+partial class SampleResponse4: Sample.SampleResponse.ISampleResponse
 {
     void Sample.SampleResponse.ISampleResponse.Accept(Sample.SampleResponse.ISampleResponseVisitor visitor) => visitor.Visit(this);
 }

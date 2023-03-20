@@ -20,7 +20,7 @@ partial interface ISampleBaseVisitor
 
 namespace Sample
 {
-partial class Sample1: Sample.SampleBase, Sample.IVisitorResult<int>
+partial class Sample1: Sample.SampleBase
 {
     public sealed override async System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleBaseVisitor visitor) => await visitor.VisitAsync(this);
 }
@@ -28,7 +28,7 @@ partial class Sample1: Sample.SampleBase, Sample.IVisitorResult<int>
 
 namespace Sample
 {
-partial class Sample2: Sample.SampleBase, Sample.IVisitorResult<int>
+partial class Sample2: Sample.SampleBase
 {
     public sealed override async System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleBaseVisitor visitor) => await visitor.VisitAsync(this);
 }
@@ -36,7 +36,7 @@ partial class Sample2: Sample.SampleBase, Sample.IVisitorResult<int>
 
 namespace Sample
 {
-partial class Sample3: Sample.SampleBase, Sample.IVisitorResult<int>
+partial class Sample3: Sample.SampleBase
 {
     public sealed override async System.Threading.Tasks.Task<int> AcceptAsync(Sample.ISampleBaseVisitor visitor) => await visitor.VisitAsync(this);
 }

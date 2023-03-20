@@ -15,25 +15,25 @@ partial class VisitorTemplate
 
     public ITypeSymbol? BaseResult { get; }
 
-    public INamedTypeSymbol VisitorInterface { get; }
+    public INamedTypeSymbol Visitor { get; }
 
     public INamedTypeSymbol Acceptor { get; }
 
-    public ImmutableArray<(INamedTypeSymbol Type, INamedTypeSymbol? ResultType)> Acceptors { get; }
+    public ImmutableArray<(INamedTypeSymbol Type, INamedTypeSymbol? SelfType, INamedTypeSymbol? ResultType)> Acceptors { get; }
 
     public VisitorTemplate(
         string rootNamespace,
         string taskName,
         ITypeSymbol? baseResult,
-        INamedTypeSymbol visitorInterface,
+        INamedTypeSymbol visitor,
         INamedTypeSymbol acceptor,
-        ImmutableArray<(INamedTypeSymbol Type, INamedTypeSymbol? ResultType)> acceptors
+        ImmutableArray<(INamedTypeSymbol Type, INamedTypeSymbol? SelfType, INamedTypeSymbol? ResultType)> acceptors
     )
     {
         this.RootNamespace = rootNamespace;
         this.TaskName = taskName;
         this.BaseResult = baseResult;
-        this.VisitorInterface = visitorInterface;
+        this.Visitor = visitor;
         this.Acceptor = acceptor;
         this.Acceptors = acceptors;
     }
@@ -46,7 +46,7 @@ partial class VisitorTemplate
 
     public string GetTypeParamStr()
     {
-        var typeParams = this.VisitorInterface.TypeParameters;
+        var typeParams = this.Visitor.TypeParameters;
         return typeParams.IsEmpty ? string.Empty : $"<{string.Join(", ", typeParams.Select(static e => e.ToDisplayString()))}>";
     }
 
@@ -69,7 +69,7 @@ partial class VisitorTemplate
 
     private IEnumerable<ITypeParameterSymbol> _GetArgParamList()
     {
-        var typeParams = this.VisitorInterface.TypeParameters;
+        var typeParams = this.Visitor.TypeParameters;
         return this.IsGeneric ? typeParams.SkipLast(1) : typeParams;
     }
 
@@ -81,9 +81,9 @@ partial class VisitorTemplate
         return char.ToLower(typeName[0]) + typeName.Substring(1);
     }
 
-    public string GetTypeConstraintList() => this.VisitorInterface
+    public string GetTypeConstraintList() => this.Visitor
         .ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat.WithGenericsOptions(SymbolDisplayGenericsOptions.IncludeTypeParameters | SymbolDisplayGenericsOptions.IncludeTypeConstraints))
-        .Substring(this.VisitorInterface.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat).Length);
+        .Substring(this.Visitor.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat).Length);
 
     public string GetBaseInterfaceName(string name)
         => string.IsNullOrWhiteSpace(this.RootNamespace) ? name : $"{this.RootNamespace}.{name}";

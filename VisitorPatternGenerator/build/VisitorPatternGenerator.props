@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <CompilerVisibleProperty Include="RootNamespace" />
-    <CompilerVisibleProperty Include="VisitorPatternGeneratorNonPublic" />
   </ItemGroup>
 
 </Project>

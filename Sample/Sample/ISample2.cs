@@ -23,7 +23,7 @@ public partial class Sample3 { }
 public partial interface ISample2Visitor { }
 
 [Visitor<ISample2>]
-public partial interface ISample2Visitor1<in TArg1, out TResult> where TArg1: class, new() where TResult: struct { }
+public partial interface ISample2Visitor1<in TArg1, out TResult> where TArg1 : class, new() where TResult : struct { }
 
 [TaskVisitor<SampleBase, int>]
 public partial interface ISampleBaseVisitor { }

@@ -6,39 +6,39 @@
 <# if (!Acceptor.ContainingNamespace.IsGlobalNamespace) { #>
 namespace <#= GetNamespace(Acceptor) #>
 {
-<# PushIndent("    "); } #>
+<# } #>
 partial <#= Acceptor.TypeKind == TypeKind.Interface ? "interface" : "class" #> <#= GetTypeIdentifier(Acceptor) #>
 {
-    <#= Acceptor.TypeKind == TypeKind.Interface ? "" : "public abstract " #><#= GetReturnType(BaseResult) #> Accept<#= IfAsync("Async") #><#= GetTypeParamStr() #>(<#= VisitorInterface.ToDisplayString() #> visitor<#= GetTypeArgListStr() #>)<#= GetTypeConstraintList() #>;
+    <#= Acceptor.TypeKind == TypeKind.Interface ? "" : "public abstract " #><#= GetReturnType(BaseResult) #> Accept<#= IfAsync("Async") #><#= GetTypeParamStr() #>(<#= Visitor.ToDisplayString() #> visitor<#= GetTypeArgListStr() #>)<#= GetTypeConstraintList() #>;
 }
-<# if (!Acceptor.ContainingNamespace.IsGlobalNamespace) { PopIndent(); #>
+<# if (!Acceptor.ContainingNamespace.IsGlobalNamespace) { #>
 }
 <# } #>
 
-<# if (!VisitorInterface.ContainingNamespace.IsGlobalNamespace) { #>
-namespace <#= GetNamespace(VisitorInterface) #>
+<# if (!Visitor.ContainingNamespace.IsGlobalNamespace) { #>
+namespace <#= GetNamespace(Visitor) #>
 {
-<# PushIndent("    "); } #>
-partial interface <#= GetTypeIdentifier(VisitorInterface) #>
+<# } #>
+partial interface <#= GetTypeIdentifier(Visitor) #>
 {
-<# foreach(var (acceptor, result) in Acceptors) { #>
-    <#= GetReturnType(IsGeneric ? BaseResult : result ?? BaseResult) #> Visit<#= IfAsync("Async") #>(<#= acceptor.ToDisplayString() #> value<#= GetTypeArgListStr() #>);
+<# foreach(var (acceptor, self, result) in Acceptors) { #>
+    <#= GetReturnType(IsGeneric ? BaseResult : result ?? BaseResult) #> Visit<#= IfAsync("Async") #>(<#= (self ?? acceptor).ToDisplayString() #> value<#= GetTypeArgListStr() #>);
 <# } #>
 }
-<# if (!VisitorInterface.ContainingNamespace.IsGlobalNamespace) { PopIndent(); #>
+<# if (!Visitor.ContainingNamespace.IsGlobalNamespace) { #>
 }
 <# } #>
-<# foreach(var (acceptor, result) in Acceptors) { #>
+<# foreach(var (acceptor, self, result) in Acceptors) { #>
 
 <#   if (!acceptor.ContainingNamespace.IsGlobalNamespace) { #>
 namespace <#= GetNamespace(acceptor) #>
 {
-<#   PushIndent("    "); } #>
-partial class <#= GetTypeIdentifier(acceptor) #>: <#= Acceptor.ToDisplayString() #><#= BaseResult is null || IsGeneric ? "" : $", {GetBaseInterfaceName("IVisitorResult")}<{(result ?? BaseResult).ToDisplayString()}>" #>
+<#   } #>
+partial class <#= GetTypeIdentifier(acceptor) #>: <#= Acceptor.ToDisplayString() #>
 {
-    <#= Acceptor.TypeKind == TypeKind.Interface ? "" : "public sealed override " #><#= IfAsync("async ") #><#= GetReturnType(BaseResult) #> <#= Acceptor.TypeKind == TypeKind.Interface ? $"{Acceptor.ToDisplayString()}." : "" #>Accept<#= IfAsync("Async") #><#= GetTypeParamStr() #>(<#= VisitorInterface.ToDisplayString() #> visitor<#= GetTypeArgListStr() #>) => <#= BaseResult is null || result is null || IsGeneric ? "" : $"({BaseResult.ToDisplayString()})" #><#= IfAsync("await ") #>visitor.Visit<#= IfAsync("Async") #>(this<#= GetArgListStr() #>);
+    <#= Acceptor.TypeKind == TypeKind.Interface ? "" : "public sealed override " #><#= IfAsync("async ") #><#= GetReturnType(BaseResult) #> <#= Acceptor.TypeKind == TypeKind.Interface ? $"{Acceptor.ToDisplayString()}." : "" #>Accept<#= IfAsync("Async") #><#= GetTypeParamStr() #>(<#= Visitor.ToDisplayString() #> visitor<#= GetTypeArgListStr() #>) => <#= BaseResult is null || result is null || IsGeneric ? "" : $"({BaseResult.ToDisplayString()})" #><#= IfAsync("await ") #>visitor.Visit<#= IfAsync("Async") #>(<#= self is null ? "" : $"({self.ToDisplayString()})" #>this<#= GetArgListStr() #>);
 }
-<#   if (!acceptor.ContainingNamespace.IsGlobalNamespace) { PopIndent(); #>
+<#   if (!acceptor.ContainingNamespace.IsGlobalNamespace) { #>
 }
 <#   } #>
 <# } #>

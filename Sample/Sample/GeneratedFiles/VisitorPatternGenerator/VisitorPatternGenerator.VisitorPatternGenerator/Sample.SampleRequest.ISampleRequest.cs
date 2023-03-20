@@ -2,8 +2,10 @@
 
 namespace Sample.SampleRequest
 {
-[MessagePack.Union(1, typeof(Sample.SampleRequest.Sample1Request))]
-[MessagePack.Union(2, typeof(Sample.SampleRequest.Sample2Request))]
-[MessagePack.Union(3, typeof(Sample.SampleRequest.Sample3Request))]
+[MessagePack.Union(1, typeof(Sample.SampleRequest.SampleRequest1))]
+[MessagePack.Union(2, typeof(Sample.SampleRequest.SampleRequest2))]
+[MessagePack.Union(3, typeof(Sample.SampleRequest.SampleRequest3))]
+[MessagePack.Union(4, typeof(Sample.SampleRequest.SampleRequest4))]
+[MessagePack.Union(5, typeof(Sample.SampleRequest.SampleRequest5))]
 partial interface ISampleRequest { }
 }

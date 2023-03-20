@@ -12,15 +12,17 @@ namespace Sample.SampleRequest
 {
 partial interface ISampleRequestVisitor
 {
-    System.Threading.Tasks.ValueTask<Sample.SampleResponse.ISampleResponse> VisitAsync(Sample.SampleRequest.Sample3Request value);
-    System.Threading.Tasks.ValueTask<Sample.SampleResponse.Sample1Response> VisitAsync(Sample.SampleRequest.Sample1Request value);
-    System.Threading.Tasks.ValueTask<Sample.SampleResponse.Sample2Response> VisitAsync(Sample.SampleRequest.Sample2Request value);
+    System.Threading.Tasks.ValueTask<Sample.SampleResponse.ISampleResponse> VisitAsync(Sample.SampleRequest.SampleRequest5 value);
+    System.Threading.Tasks.ValueTask<Sample.SampleResponse.ISampleResponse> VisitAsync(Sample.SampleRequest.ISampleRequest<Sample.SampleResponse.ISampleResponse> value);
+    System.Threading.Tasks.ValueTask<Sample.SampleResponse.SampleResponse1> VisitAsync(Sample.SampleRequest.SampleRequest1 value);
+    System.Threading.Tasks.ValueTask<Sample.SampleResponse.SampleResponse2> VisitAsync(Sample.SampleRequest.SampleRequest2 value);
+    System.Threading.Tasks.ValueTask<Sample.SampleResponse.SampleResponse3> VisitAsync(Sample.SampleRequest.ISampleRequest<Sample.SampleResponse.SampleResponse3> value);
 }
 }
 
 namespace Sample.SampleRequest
 {
-partial class Sample3Request: Sample.SampleRequest.ISampleRequest, Sample.IVisitorResult<Sample.SampleResponse.ISampleResponse>
+partial class SampleRequest5: Sample.SampleRequest.ISampleRequest
 {
     async System.Threading.Tasks.ValueTask<Sample.SampleResponse.ISampleResponse> Sample.SampleRequest.ISampleRequest.AcceptAsync(Sample.SampleRequest.ISampleRequestVisitor visitor) => await visitor.VisitAsync(this);
 }
@@ -28,7 +30,15 @@ partial class Sample3Request: Sample.SampleRequest.ISampleRequest, Sample.IVisit
 
 namespace Sample.SampleRequest
 {
-partial class Sample1Request: Sample.SampleRequest.ISampleRequest, Sample.IVisitorResult<Sample.SampleResponse.Sample1Response>
+partial class SampleRequest4: Sample.SampleRequest.ISampleRequest
+{
+    async System.Threading.Tasks.ValueTask<Sample.SampleResponse.ISampleResponse> Sample.SampleRequest.ISampleRequest.AcceptAsync(Sample.SampleRequest.ISampleRequestVisitor visitor) => await visitor.VisitAsync((Sample.SampleRequest.ISampleRequest<Sample.SampleResponse.ISampleResponse>)this);
+}
+}
+
+namespace Sample.SampleRequest
+{
+partial class SampleRequest1: Sample.SampleRequest.ISampleRequest
 {
     async System.Threading.Tasks.ValueTask<Sample.SampleResponse.ISampleResponse> Sample.SampleRequest.ISampleRequest.AcceptAsync(Sample.SampleRequest.ISampleRequestVisitor visitor) => (Sample.SampleResponse.ISampleResponse)await visitor.VisitAsync(this);
 }
@@ -36,8 +46,16 @@ partial class Sample1Request: Sample.SampleRequest.ISampleRequest, Sample.IVisit
 
 namespace Sample.SampleRequest
 {
-partial class Sample2Request: Sample.SampleRequest.ISampleRequest, Sample.IVisitorResult<Sample.SampleResponse.Sample2Response>
+partial class SampleRequest2: Sample.SampleRequest.ISampleRequest
 {
     async System.Threading.Tasks.ValueTask<Sample.SampleResponse.ISampleResponse> Sample.SampleRequest.ISampleRequest.AcceptAsync(Sample.SampleRequest.ISampleRequestVisitor visitor) => (Sample.SampleResponse.ISampleResponse)await visitor.VisitAsync(this);
+}
+}
+
+namespace Sample.SampleRequest
+{
+partial class SampleRequest3: Sample.SampleRequest.ISampleRequest
+{
+    async System.Threading.Tasks.ValueTask<Sample.SampleResponse.ISampleResponse> Sample.SampleRequest.ISampleRequest.AcceptAsync(Sample.SampleRequest.ISampleRequestVisitor visitor) => (Sample.SampleResponse.ISampleResponse)await visitor.VisitAsync((Sample.SampleRequest.ISampleRequest<Sample.SampleResponse.SampleResponse3>)this);
 }
 }

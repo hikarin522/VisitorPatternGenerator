@@ -19,7 +19,10 @@ internal sealed class AcceptorAttribute: System.Attribute
 internal sealed class AcceptorAttribute<TAcceptor>: System.Attribute where TAcceptor : class { }
 
 [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-internal sealed class AcceptorAttribute<TAcceptor, TResult>: System.Attribute where TAcceptor : class { }
+internal sealed class AcceptorAttribute<TAcceptor, TSelf>: System.Attribute where TAcceptor : class where TSelf : class { }
+
+[System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+internal sealed class AcceptorAttribute<TAcceptor, TSelf, TResult>: System.Attribute where TAcceptor : class where TSelf : class { }
 
 [System.AttributeUsage(System.AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
 internal sealed class VisitorAttribute<TAcceptor>: System.Attribute where TAcceptor : class

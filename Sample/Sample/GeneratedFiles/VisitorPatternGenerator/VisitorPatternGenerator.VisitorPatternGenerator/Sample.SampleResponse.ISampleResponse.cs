@@ -2,7 +2,9 @@
 
 namespace Sample.SampleResponse
 {
-[MessagePack.Union(1, typeof(Sample.SampleResponse.Sample1Response))]
-[MessagePack.Union(2, typeof(Sample.SampleResponse.Sample2Response))]
+[MessagePack.Union(1, typeof(Sample.SampleResponse.SampleResponse1))]
+[MessagePack.Union(2, typeof(Sample.SampleResponse.SampleResponse2))]
+[MessagePack.Union(3, typeof(Sample.SampleResponse.SampleResponse3))]
+[MessagePack.Union(4, typeof(Sample.SampleResponse.SampleResponse4))]
 partial interface ISampleResponse { }
 }

@@ -17,6 +17,7 @@ public class VisitorPatternGenerator: IIncrementalGenerator
     public static IReadOnlyList<string> AcceptorAttributeNames { get; } = new[] {
         typeof(AcceptorAttribute<>).FullName,
         typeof(AcceptorAttribute<,>).FullName,
+        typeof(AcceptorAttribute<,,>).FullName,
     };
 
     public static IReadOnlyList<string> VisitorAttributeNames { get; } = new[] {
@@ -41,17 +42,7 @@ public class VisitorPatternGenerator: IIncrementalGenerator
             ct.ThrowIfCancellationRequested();
             options.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace);
             rootNamespace = string.IsNullOrWhiteSpace(rootNamespace) ? string.Empty : rootNamespace!;
-            options.GlobalOptions.TryGetValue("build_property.VisitorPatternGeneratorNonPublic", out var nonPublicString);
-            var nonPublic = string.Equals(nonPublicString, "true", StringComparison.OrdinalIgnoreCase);
-            return (rootNamespace, nonPublic);
-        });
-
-        context.RegisterSourceOutput(optionsProvider, static (ctx, e) => {
-            var (rootNamespace, nonPublic) = e;
-            ctx.CancellationToken.ThrowIfCancellationRequested();
-
-            var template = new InterfacesTemplate(rootNamespace, nonPublic);
-            ctx.AddSource(nameof(InterfacesTemplate), template.TransformText());
+            return rootNamespace;
         });
 
         var acceptors = AcceptorAttributeNames.Select(e => context.SyntaxProvider.ForAttributeWithMetadataName(e).Collect())
@@ -68,8 +59,8 @@ public class VisitorPatternGenerator: IIncrementalGenerator
         var acceptor = context.SyntaxProvider.ForAttributeWithMetadataName(AcceptorAttributeName);
         var acceptorProvider = acceptor.Combine(acceptors).Select(static (e, ct) => {
             ct.ThrowIfCancellationRequested();
-            var acceptorInterface = (INamedTypeSymbol)e.Left.TargetSymbol;
-            var acceptors = e.Right.GetValueOrDefault(acceptorInterface);
+            var acceptor = (INamedTypeSymbol)e.Left.TargetSymbol;
+            var acceptors = e.Right.GetValueOrDefault(acceptor);
             return (e.Left, acceptors);
         });
 
@@ -83,13 +74,13 @@ public class VisitorPatternGenerator: IIncrementalGenerator
             var visitor = context.SyntaxProvider.ForAttributeWithMetadataName(attrName);
             var visitorProvider = visitor.Combine(acceptors).Select(static (e, ct) => {
                 ct.ThrowIfCancellationRequested();
-                var acceptorInterface = (INamedTypeSymbol)e.Left.Attributes[0].AttributeClass!.TypeArguments[0];
-                var acceptors = e.Right.GetValueOrDefault(acceptorInterface);
+                var acceptor = (INamedTypeSymbol)e.Left.Attributes[0].AttributeClass!.TypeArguments[0];
+                var acceptors = e.Right.GetValueOrDefault(acceptor);
                 return (e.Left, acceptors);
             }).Combine(optionsProvider);
 
             context.RegisterSourceOutput(visitorProvider, static (ctx, e) => {
-                var ((visitor, acceptors), (rootNamespace, _)) = e;
+                var ((visitor, acceptors), rootNamespace) = e;
                 ctx.CancellationToken.ThrowIfCancellationRequested();
                 _AddVisitorSource(ctx, rootNamespace, visitor, acceptors);
             });
@@ -142,7 +133,16 @@ public class VisitorPatternGenerator: IIncrementalGenerator
         ITypeSymbol? baseResultType = nonGenericReturn ? baseResultSymbol : typeParams.Last();
 
         var acceptorTypes = acceptors
-            .Select(static e => ((INamedTypeSymbol)e.Item2.TargetSymbol, e.Item1.AttributeClass!.TypeArguments.ElementAtOrDefault(1) as INamedTypeSymbol))
+            .Select(static e => {
+                var acceptor = (INamedTypeSymbol)e.Item2.TargetSymbol;
+                var typeArg = e.Item1.AttributeClass!.TypeArguments;
+                var selfType = typeArg.ElementAtOrDefault(1) as INamedTypeSymbol;
+                if (SymbolEqualityComparer.Default.Equals(acceptor, selfType)) {
+                    selfType = null;
+                }
+                var resultType = typeArg.ElementAtOrDefault(2) as INamedTypeSymbol;
+                return (acceptor, selfType, resultType);
+            })
             .ToImmutableArray();
 
         var template = new VisitorTemplate(
