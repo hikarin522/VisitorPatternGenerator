@@ -8,7 +8,7 @@ namespace <#= Acceptor.ContainingNamespace.ToDisplayString() #>
 {
 <# } #>
 <# if (Options.HasFlag(AcceptorOptions.MessagePackUnion)) { for (var i = 0; i < Acceptors.Count; ++i) { #>
-[MessagePack.Union(<#= i + 1 #>, typeof(<#= Acceptors[i].ToDisplayString() #>))]
+[MessagePack.Union(<#= i #>, typeof(<#= Acceptors[i].ToDisplayString() #>))]
 <# } } #>
 partial <#= Acceptor.TypeKind == TypeKind.Interface ? "interface" : "class" #> <#= Acceptor.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat.WithGenericsOptions(SymbolDisplayGenericsOptions.IncludeTypeParameters | SymbolDisplayGenericsOptions.IncludeVariance)) #> { }
 <# if(!Acceptor.ContainingNamespace.IsGlobalNamespace) { #>
