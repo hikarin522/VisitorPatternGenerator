@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -82,6 +81,11 @@ public class VisitorPatternGenerator: IIncrementalGenerator
             context.RegisterSourceOutput(visitorProvider, static (ctx, e) => {
                 var ((visitor, acceptors), rootNamespace) = e;
                 ctx.CancellationToken.ThrowIfCancellationRequested();
+
+                if (acceptors.IsDefaultOrEmpty) {
+                    return;
+                }
+
                 _AddVisitorSource(ctx, rootNamespace, visitor, acceptors);
             });
         }
