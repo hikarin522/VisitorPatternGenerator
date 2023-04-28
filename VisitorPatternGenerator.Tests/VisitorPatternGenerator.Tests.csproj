@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -20,7 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     
-    <PackageReference Include="RoseLynn.Testing" Version="0.6.3" />
+    <PackageReference Include="RoseLynn.Testing" Version="0.6.4" />
 
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzer.Testing" Version="1.1.1" />
 
